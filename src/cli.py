@@ -95,7 +95,7 @@ def hash_check() -> None:
     #sw_updates = glob.glob('*.vhd')
     for curr_file in sw_updates:
         res = general_utils.hashes.check_hash_single(curr_file)
-        logger.info(f"{curr_file:<50} => {res}")
+        logger.info(f"{curr_file:<45} => {res}")
 
 if __name__ == '__main__':
     hash_check()
