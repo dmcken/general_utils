@@ -1,0 +1,13 @@
+[MASTER]
+
+
+#jobs=4
+
+[MESSAGES CONTROL]
+
+disable=logging-fstring-interpolation,fixme
+
+[REPORTS]
+output-format=text
+#files-output=no
+

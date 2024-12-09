@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+# Can be removed once the GIT dependencies are gone.
+allow-direct-references = true
+
+[tool.hatch.version]
+path = "src/__init__.py"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project]
+name="general_utils"
+dynamic=["version"]
+authors = [
+  { name="David Mc Ken", email="david.mcken@codepro.guru" },
+]
+description="Video processing utilities"
+requires-python = ">=3.8"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Development Status :: 4 - Beta",
+]
+dependencies = [
+  #"python-dotenv",
+]
+
+[project.urls]
+Homepage = "https://github.com/dmcken/general_utils"
+Issues = "https://github.com/dmcken/general_utils/issues"
+
+[project.scripts]
+hash_check    = "cli:hash_check"
+hash_create   = "cli:hash_create"
