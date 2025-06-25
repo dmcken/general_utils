@@ -35,5 +35,6 @@ Homepage = "https://github.com/dmcken/general_utils"
 Issues = "https://github.com/dmcken/general_utils/issues"
 
 [project.scripts]
-hash_check    = "cli:hash_check"
-hash_create   = "cli:hash_create"
+hash_check        = "cli:hash_check"
+hash_create       = "cli:hash_create"
+compression_check = "cli:compression_check"
