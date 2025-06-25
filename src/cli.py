@@ -3,19 +3,22 @@
 # System imports
 import argparse
 import glob
+import itertools
 import logging
 import os
 import pprint
+import subprocess
 import sys
 import traceback
 
 # Local imports
+import general_utils.compression
 import general_utils.hashes
 
 # CLI Functions
 logger = logging.getLogger(__name__)
 
-def parse_arguments_create_hashes():
+def parse_arguments_create_hashes() -> dict:
     '''Parse arguments and return a config object with appropriate defaults.
     '''
     default_hashes = ['md5','sha1','sha256','sha512']
@@ -96,6 +99,37 @@ def hash_check() -> None:
     for curr_file in sw_updates:
         res = general_utils.hashes.check_hash_single(curr_file)
         logger.info(f"{curr_file:<45} => {res}")
+
+
+def parse_arguments_compression_check() -> dict:
+    """Parse arguments for compression checks.
+
+    Returns:
+        dict: configuration parameters.
+    """
+    parser = argparse.ArgumentParser(
+        prog='Compression checks',
+        description='Calculate compression values for various algorithms for the specified file.',
+    )
+    parser.add_argument('filename')
+    args = parser.parse_args()
+
+    return {
+        'filename': args.filename,
+        'tmp': '/dev/shm'
+    }
+
+
+def compression_check() -> None:
+    """Check compression algorithms.
+    """
+    config = parse_arguments_compression_check()
+    setup_cli_logging()
+
+    general_utils.compression.compare_compression(config['filename'])
+
+    return
+
 
 if __name__ == '__main__':
     hash_check()
