@@ -130,6 +130,5 @@ def compress_compare() -> None:
 
     return
 
-
 if __name__ == '__main__':
     hash_check()
