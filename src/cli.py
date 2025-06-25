@@ -101,7 +101,7 @@ def hash_check() -> None:
         logger.info(f"{curr_file:<45} => {res}")
 
 
-def parse_arguments_compression_check() -> dict:
+def parse_arguments_compress_compare() -> dict:
     """Parse arguments for compression checks.
 
     Returns:
@@ -120,10 +120,10 @@ def parse_arguments_compression_check() -> dict:
     }
 
 
-def compression_check() -> None:
+def compress_compare() -> None:
     """Check compression algorithms.
     """
-    config = parse_arguments_compression_check()
+    config = parse_arguments_compress_compare()
     setup_cli_logging()
 
     general_utils.compression.compare_compression(config['filename'])
