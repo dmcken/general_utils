@@ -35,6 +35,8 @@ Homepage = "https://github.com/dmcken/general_utils"
 Issues = "https://github.com/dmcken/general_utils/issues"
 
 [project.scripts]
+bulk_cbz          = "cli:bulk_cbz"
+compress_compare  = "cli:compress_compare"
 hash_check        = "cli:hash_check"
 hash_create       = "cli:hash_create"
-compress_compare  = "cli:compress_compare"
+

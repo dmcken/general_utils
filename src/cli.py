@@ -7,13 +7,16 @@ import itertools
 import logging
 import os
 import pprint
+import shutil
 import subprocess
 import sys
 import traceback
 
 # Local imports
+import general_utils.archive
 import general_utils.compression
 import general_utils.hashes
+import general_utils.utils
 
 # CLI Functions
 logger = logging.getLogger(__name__)
@@ -107,18 +110,30 @@ def parse_arguments_compress_compare() -> dict:
     Returns:
         dict: configuration parameters.
     """
+
+    available_algos = general_utils.compression.compression_algos.keys()
+
     parser = argparse.ArgumentParser(
-        prog='Compression checks',
+        prog='Compression comparison checks',
         description='Calculate compression values for various algorithms for the specified file.',
     )
     parser.add_argument('filename')
+    parser.add_argument(
+        '-c','--compression',
+        choices=[None,*available_algos],
+        default=None,
+        help=f"Compression options: {', '.join(available_algos)}"
+    )
+    # TODO: Add compression algorithm - defaults to all
     args = parser.parse_args()
 
     return {
+        'compression': args.compression,
         'filename': args.filename,
         'tmp': '/dev/shm'
     }
 
+# Compress compare - Start
 
 def compress_compare() -> None:
     """Check compression algorithms.
@@ -126,9 +141,79 @@ def compress_compare() -> None:
     config = parse_arguments_compress_compare()
     setup_cli_logging()
 
-    general_utils.compression.compare_compression(config['filename'])
+    print(f"Params: {config}")
+
+    general_utils.compression.compare_compression(
+        config['filename'],
+        config['compression'],
+    )
 
     return
+
+# Bulk CBZ - Start
+
+def parse_arguments_bulk_cbz() -> dict[str,str]:
+    """Parse arguments for bulk cbz.
+
+    Returns:
+        dict[str,str]: configuration parameters.
+    """
+    parser = argparse.ArgumentParser(
+        prog='Bulk cbz',
+        description='',
+    )
+    parser.add_argument('path', type=str, default='.', help="Path to folders to cbz")
+    args = parser.parse_args()
+
+    return {
+        'path': args.path,
+    }
+
+def bulk_cbz() -> None:
+    '''Bulk CBZ directories.
+    '''
+    config = parse_arguments_bulk_cbz()
+
+
+    '''
+    import shutil
+
+    for curr_dir in d:
+        general_utils.archive.zipdir(curr_dir,zipFileExtension='cbz')
+        shutil.rmtree(curr_dir)
+    '''
+
+
+    dirs_to_cbz = general_utils.utils.get_immediate_subdirectories(config['path'])
+    for sub_dir in dirs_to_cbz:
+        sub_dir_full_path = os.path.join(
+            os.path.abspath(config['path']),
+            sub_dir
+        )
+        sub_dir_entries = os.listdir(sub_dir_full_path)
+        invalid_entries = False
+        for curr_sub_entry in sub_dir_entries:
+            entry_path = os.path.join(sub_dir_full_path, curr_sub_entry)
+            if os.path.isdir(entry_path):
+                print("Found sub directory")
+                invalid_entries = True
+                break
+
+            _, f_ext = curr_sub_entry.rsplit('.',maxsplit=1)
+            f_ext = f_ext.lower()
+            if f_ext not in ['bmp','gif','jpg','jpeg','pdf','png','txt','webp']:
+                print(f"Found unwanted file type: {curr_sub_entry}")
+                invalid_entries = True
+                break
+
+        if invalid_entries:
+            print(f"Skipping dir: {sub_dir}")
+            continue
+
+        print(f"Dir: '{sub_dir}'", end=' ')
+        general_utils.archive.zipdir(sub_dir, file_ext = 'cbz')
+        shutil.rmtree(sub_dir_full_path)
+        print("Done")
 
 if __name__ == '__main__':
     hash_check()

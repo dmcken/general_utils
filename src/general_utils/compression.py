@@ -24,7 +24,7 @@ compression_algos = {
             ],
         },
     },
-    #'gzip': {},
+    # 'gzip': {},
     'xz': {
         'ext': 'xz',
         'extra_args': ['-k'],
@@ -58,10 +58,28 @@ compression_algos = {
         },
         'output': True,
     },
+    'zstd': {
+        'ext': 'zst',
+        'extra_args': ['-T0','-k','-f'],
+        'params': {
+            'compression level': [
+                '-1',
+                '-3',
+                '-5',
+                '-7',
+                '-9',
+                '-11',
+                '-13',
+                '-15',
+                '-17',
+                '-19'
+            ],
+        },
+    }
 }
 
 
-def compare_compression(filename: str) -> None:
+def compare_compression(filename: str, compression_algo: str = None) -> None:
     """Compare compression algorithms.
     """
 
@@ -69,6 +87,10 @@ def compare_compression(filename: str) -> None:
     print(f"Original file '{filename} => {orig_size:,}")
 
     for cmd,data in compression_algos.items():
+        if compression_algo is not None:
+            if cmd != compression_algo:
+                continue
+
         logger.info(f"Testing: {cmd} => {pprint.pformat(data['params'])}")
 
         permutations = list(map(
